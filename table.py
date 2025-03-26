@@ -66,29 +66,27 @@ class Table:
 		if self.selected_cell:
 			self.selected_cell.value = value
 			self.selected_cell.input_by_player = True
-			if(self.is_valid()):
+			if(self.is_valid(self.selected_cell.row, self.selected_cell.col, self.selected_cell.value)):
 				pass
 			self._other_value_highlighter(self.selected_cell.row, self.selected_cell.col)
 
-	def is_valid(self):
-		x = self.selected_cell.row
-		y = self.selected_cell.col
-		num = self.selected_cell.value
-		
+	def is_valid(self, table, x, y, num):
 		#check rows and cols
 		for i in range(n_cells):
-			if self.table_cells[i][y].value == num:
+			if table[i][y].value == num:
 				return False
-			if self.table_cells[x][i].value == num:
+			if table[x][i].value == num:
 				return False
 		
 		#check 3x3 grid
 		start_x, start_y = 3 * (x // 3), 3 * (y // 3)
 		for i in range(3):
 			for j in range(3):
-				if self.table_cells[start_x + i][start_y + j] == num:
+				if table[start_x + i][start_y + j].value == num:
 					return False
 		return True
+	
+
 	
 	# Returns possible nums for a given cell -> does not recycle
 	def return_valid_nums(self):
@@ -111,11 +109,60 @@ class Table:
 					return False
 		return True
 	
+	'''
+		Generates the puzzle - 
+	'''
 	def backtracking_sudoku_solver(self):
 		for row in range(n_cells):
 			for col in range(n_cells):
-				if self.table_cells[row][col] == 0:
-					pass
+				if self.table_cells[row][col].value == 0: #empty cell
+					for num in random.sample(range(1, 10), 9): #takes a random number
+						if self.is_valid(self.table_cells, row, col, num):
+							self.table_cells[row][col].value = num
+							if self.backtracking_sudoku_solver():
+								return True
+							self.table_cells[row][col].value = 0
+					return False
+		return True
+	
+	def count_solutions(self):
+		temp_table = [row[:] for row in self.table_cells]
+		solutions = [0] # no. of different solutions -> an array so that it can be modified by the insider function
+
+		def solve_with_count(table):
+			for row in range(n_cells):
+				for col in range(n_cells):
+					if table[row][col].value == 0:
+						for n in range(1, 10):
+							if self.is_valid(table, row, col, n):
+								table[row][col].value = n
+								solve_with_count(table)
+								table[row][col].value = 0
+						return
+			solutions[0] += 1
+			if solutions[0] > 1:
+				return
+		solve_with_count(temp_table)
+		return solutions[0]
+
+	def remove_numbers(self, ammount=40):
+		positions = [(r, c) for r in range(n_cells) for c in range(n_cells)]
+		random.shuffle(positions)
+
+		removed = 0
+		while removed < ammount:
+			row, col = positions.pop()
+			backup = self.table_cells[row][col]
+			self.table_cells[row][col].value = 0
+
+			if self.count_solutions() != 1:
+				self.table_cells[row][col] = backup
+			else:
+				removed += 1
+
+	def generate_puzzle(self):
+		self.backtracking_sudoku_solver()
+		self.remove_numbers(40)
 
 	def _draw_grid(self):
 		# Basic 9x9 sudoku 9 seperate grid parts drawing

@@ -15,6 +15,7 @@ class Main:
 	def main(self):
 		table = Table(self.screen, (padding_x, padding_y))
 		playing = True
+		table.generate_puzzle()
 		while True:
 			# Events
 			self.handle_events(table, playing)
