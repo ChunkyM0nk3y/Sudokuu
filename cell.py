@@ -1,5 +1,5 @@
 import pygame
-from settings import cell_color, cell_border_color as border_color, default_font_color, added_font_color
+from settings import cell_color, cell_border_color as border_color, default_font_color, added_font_color, upper_padding
 
 pygame.font.init()
 
@@ -13,7 +13,7 @@ class Cell:
 		self.width = cell_size[0]
 		self.height = cell_size[1]
 		self.abs_x = row * self.width + padding[0]
-		self.abs_y = col * self.height + padding[1]
+		self.abs_y = col * self.height + padding[1] + upper_padding
 		self.font = pygame.font.SysFont("monspace", self.cell_size[0])
 		self.g_font = pygame.font.SysFont("monspace", self.cell_size[0] // 3)
 		self.rect = pygame.Rect(self.abs_x, self.abs_y, self.width, self.height)

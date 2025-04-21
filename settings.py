@@ -7,6 +7,7 @@ cell_size = (width // n_cells, height // n_cells)
 #sudoku window padding
 padding_x = 10
 padding_y = 10
+upper_padding = 50
 
 #color pallete
 cell_color = (255, 255, 255)
@@ -19,3 +20,4 @@ added_font_color = (65, 65, 120)
 wrong_font_color = (250, 160, 175)
 same_num_highlight_color = (168, 185, 202)
 wrong_highlight_color = (213, 179, 185)
+wrong_sel_cel_col = (230, 179, 185)
